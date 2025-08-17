@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertBookingSchema, insertContactSchema } from "@shared/schema";
+import { insertBookingSchema, insertContactSchema, insertContentSectionSchema, insertPropertyImageSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -93,6 +93,149 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         res.status(500).json({ message: "Failed to create contact" });
       }
+    }
+  });
+
+  // Content Management API Routes
+
+  // Get all content sections
+  app.get("/api/content", async (req, res) => {
+    try {
+      const content = await storage.getContentSections();
+      res.json(content);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch content" });
+    }
+  });
+
+  // Get specific content section
+  app.get("/api/content/:sectionKey", async (req, res) => {
+    try {
+      const content = await storage.getContentSection(req.params.sectionKey);
+      if (!content) {
+        res.status(404).json({ message: "Content section not found" });
+        return;
+      }
+      res.json(content);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch content section" });
+    }
+  });
+
+  // Create content section
+  app.post("/api/content", async (req, res) => {
+    try {
+      const validatedData = insertContentSectionSchema.parse(req.body);
+      const content = await storage.createContentSection(validatedData);
+      res.status(201).json(content);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      } else {
+        res.status(500).json({ message: "Failed to create content section" });
+      }
+    }
+  });
+
+  // Update content section
+  app.put("/api/content/:sectionKey", async (req, res) => {
+    try {
+      const { title, content, metadata } = req.body;
+      const updatedContent = await storage.updateContentSection(req.params.sectionKey, {
+        title,
+        content,
+        metadata
+      });
+      if (!updatedContent) {
+        res.status(404).json({ message: "Content section not found" });
+        return;
+      }
+      res.json(updatedContent);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update content section" });
+    }
+  });
+
+  // Property Images API Routes
+
+  // Get property images by category
+  app.get("/api/images", async (req, res) => {
+    try {
+      const { category } = req.query;
+      const images = await storage.getPropertyImages(category as string);
+      res.json(images);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch images" });
+    }
+  });
+
+  // Get specific property image
+  app.get("/api/images/:id", async (req, res) => {
+    try {
+      const image = await storage.getPropertyImage(req.params.id);
+      if (!image) {
+        res.status(404).json({ message: "Image not found" });
+        return;
+      }
+      res.json(image);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch image" });
+    }
+  });
+
+  // Create property image
+  app.post("/api/images", async (req, res) => {
+    try {
+      const validatedData = insertPropertyImageSchema.parse(req.body);
+      const image = await storage.createPropertyImage(validatedData);
+      res.status(201).json(image);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      } else {
+        res.status(500).json({ message: "Failed to create image" });
+      }
+    }
+  });
+
+  // Update property image
+  app.put("/api/images/:id", async (req, res) => {
+    try {
+      const { title, description, url, sortOrder, isActive } = req.body;
+      const image = await storage.updatePropertyImage(req.params.id, {
+        title,
+        description,
+        url,
+        sortOrder,
+        isActive
+      });
+      if (!image) {
+        res.status(404).json({ message: "Image not found" });
+        return;
+      }
+      res.json(image);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update image" });
+    }
+  });
+
+  // Delete property image
+  app.delete("/api/images/:id", async (req, res) => {
+    try {
+      const success = await storage.deletePropertyImage(req.params.id);
+      if (!success) {
+        res.status(404).json({ message: "Image not found" });
+        return;
+      }
+      res.json({ message: "Image deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete image" });
     }
   });
 

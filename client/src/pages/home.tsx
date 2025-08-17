@@ -1,39 +1,58 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Slideshow from "../components/slideshow";
 import BookingForm from "../components/booking-form";
 import ContactForm from "../components/contact-form";
 import { Card } from "@/components/ui/card";
 import { Star, Wifi, Car, Shield } from "lucide-react";
+import type { ContentSection, PropertyImage } from "@shared/schema";
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("gallery");
 
-  const exteriorImages = [
-    "https://demo-source.imgix.net/house.jpg",
-    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
-    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
-    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
-    "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
-    "https://pixabay.com/get/gf49460d6ff6cf6e70b3efd04b0b7891aa376dc76d3ca78aee1dd0ade770dc7d13fc14f4db9a0ec993cfa97b313908a6510cd23b46349a4c24626ef044b223f56_1280.jpg"
-  ];
+  // Fetch dynamic content from CMS
+  const { data: content = [] } = useQuery<ContentSection[]>({
+    queryKey: ["/api/content"],
+    queryFn: async () => {
+      const response = await fetch("/api/content");
+      if (!response.ok) throw new Error("Failed to fetch content");
+      return response.json();
+    },
+  });
 
-  const interiorImages = [
-    { url: "https://demo-source.imgix.net/plant.jpg", title: "Living Room", description: "Open-concept design with panoramic views" },
-    { url: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Master Suite", description: "King bed with stunning ocean views" },
-    { url: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Gourmet Kitchen", description: "Professional-grade appliances" },
-    { url: "https://images.unsplash.com/photo-1620626011761-996317b8d101?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Spa Bathroom", description: "Marble finishes and soaking tub" },
-    { url: "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Dining Room", description: "Seats 10 guests comfortably" },
-    { url: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Home Office", description: "Perfect for remote work" },
-    { url: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Guest Suite", description: "Comfortable accommodations" },
-    { url: "https://images.unsplash.com/photo-1556020685-ae41abfc9365?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Media Room", description: "85\" screen and surround sound" }
-  ];
+  // Fetch images by category
+  const { data: exteriorImages = [] } = useQuery<PropertyImage[]>({
+    queryKey: ["/api/images", "exterior"],
+    queryFn: async () => {
+      const response = await fetch("/api/images?category=exterior");
+      if (!response.ok) throw new Error("Failed to fetch images");
+      return response.json();
+    },
+  });
 
-  const amenityImages = [
-    { url: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Infinity Pool & Spa", description: "Relax in our stunning infinity pool with panoramic ocean views, complete with integrated spa jets and underwater lighting for evening swims." },
-    { url: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Private Fitness Center", description: "Stay active in our fully equipped private gym featuring state-of-the-art cardio and strength training equipment with mountain views." },
-    { url: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Outdoor Entertainment", description: "Dine al fresco on our expansive terrace featuring a professional-grade BBQ, outdoor kitchen, and dining for 12 guests with stunning sunset views." },
-    { url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Private Wine Cellar", description: "Discover our curated collection in the climate-controlled wine cellar, complete with tasting area and sommelier service upon request." }
-  ];
+  const { data: interiorImages = [] } = useQuery<PropertyImage[]>({
+    queryKey: ["/api/images", "interior"],
+    queryFn: async () => {
+      const response = await fetch("/api/images?category=interior");
+      if (!response.ok) throw new Error("Failed to fetch images");
+      return response.json();
+    },
+  });
+
+  const { data: amenityImages = [] } = useQuery<PropertyImage[]>({
+    queryKey: ["/api/images", "amenity"],
+    queryFn: async () => {
+      const response = await fetch("/api/images?category=amenity");
+      if (!response.ok) throw new Error("Failed to fetch images");
+      return response.json();
+    },
+  });
+
+  // Helper function to get content by key
+  const getContent = (key: string) => {
+    const section = content.find(s => s.sectionKey === key);
+    return section?.content || "";
+  };
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -84,6 +103,13 @@ export default function Home() {
               >
                 Contact
               </button>
+              <a 
+                href="/editor"
+                className="text-secondary hover:text-primary transition-colors"
+                data-testid="nav-editor"
+              >
+                Visual Editor
+              </a>
             </div>
           </div>
         </div>
@@ -91,15 +117,15 @@ export default function Home() {
 
       {/* Hero Section with Slideshow */}
       <section id="gallery" className="relative h-screen overflow-hidden">
-        <Slideshow images={exteriorImages} />
+        <Slideshow images={exteriorImages.map(img => img.url)} />
         
         <div className="absolute inset-0 flex items-center justify-center z-10">
           <div className="text-center text-white px-4 max-w-4xl">
             <h1 className="text-4xl md:text-6xl font-bold mb-6" data-testid="hero-title">
-              Luxury Villa Retreat
+              {getContent("hero-title") || "Luxury Villa Retreat"}
             </h1>
             <p className="text-xl md:text-2xl mb-8 font-light" data-testid="hero-subtitle">
-              Experience unparalleled comfort in our stunning contemporary villa
+              {getContent("hero-subtitle") || "Experience unparalleled comfort in our stunning contemporary villa"}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
@@ -126,7 +152,7 @@ export default function Home() {
             <div className="grid lg:grid-cols-3 gap-12">
               <div className="lg:col-span-2">
                 <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-6" data-testid="text-property-title">
-                  Modern Luxury Villa
+                  {getContent("property-title") || "Modern Luxury Villa"}
                 </h2>
                 <div className="flex items-center space-x-6 mb-8 text-muted">
                   <div className="flex items-center space-x-2">
@@ -144,22 +170,32 @@ export default function Home() {
                 </div>
                 
                 <div className="prose prose-lg max-w-none text-gray-700">
-                  <p className="mb-6">
-                    Discover the perfect blend of modern luxury and natural beauty in our stunning contemporary villa. 
-                    Perched on a hillside with breathtaking panoramic views, this architectural masterpiece offers an 
-                    unparalleled vacation experience.
-                  </p>
-                  
-                  <p className="mb-6">
-                    The villa features expansive living spaces with floor-to-ceiling windows that blur the line between 
-                    indoor and outdoor living. Each of the five beautifully appointed bedrooms offers stunning views and 
-                    en-suite bathrooms, ensuring privacy and comfort for all guests.
-                  </p>
-                  
-                  <p>
-                    Whether you're seeking a romantic getaway, family vacation, or corporate retreat, our villa provides 
-                    the perfect sanctuary with world-class amenities and personalized service.
-                  </p>
+                  {getContent("property-description") ? (
+                    getContent("property-description").split('\n').map((paragraph, index) => (
+                      <p key={index} className="mb-6 last:mb-0">
+                        {paragraph}
+                      </p>
+                    ))
+                  ) : (
+                    <>
+                      <p className="mb-6">
+                        Discover the perfect blend of modern luxury and natural beauty in our stunning contemporary villa. 
+                        Perched on a hillside with breathtaking panoramic views, this architectural masterpiece offers an 
+                        unparalleled vacation experience.
+                      </p>
+                      
+                      <p className="mb-6">
+                        The villa features expansive living spaces with floor-to-ceiling windows that blur the line between 
+                        indoor and outdoor living. Each of the five beautifully appointed bedrooms offers stunning views and 
+                        en-suite bathrooms, ensuring privacy and comfort for all guests.
+                      </p>
+                      
+                      <p>
+                        Whether you're seeking a romantic getaway, family vacation, or corporate retreat, our villa provides 
+                        the perfect sanctuary with world-class amenities and personalized service.
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -186,19 +222,19 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {interiorImages.map((image, index) => (
-              <Card key={index} className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
+              <Card key={image.id} className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
                 <img 
                   src={image.url} 
-                  alt={image.title} 
+                  alt={image.title || "Interior"} 
                   className="w-full h-48 object-cover"
                   data-testid={`img-interior-${index}`}
                 />
                 <div className="p-4">
                   <h3 className="font-semibold text-secondary" data-testid={`text-interior-title-${index}`}>
-                    {image.title}
+                    {image.title || "Interior Space"}
                   </h3>
                   <p className="text-sm text-muted" data-testid={`text-interior-description-${index}`}>
-                    {image.description}
+                    {image.description || "Beautiful interior space"}
                   </p>
                 </div>
               </Card>
@@ -221,19 +257,19 @@ export default function Home() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
             {amenityImages.map((amenity, index) => (
-              <div key={index} className="space-y-6">
+              <div key={amenity.id} className="space-y-6">
                 <img 
                   src={amenity.url} 
-                  alt={amenity.title} 
+                  alt={amenity.title || "Amenity"} 
                   className="w-full h-64 object-cover rounded-xl shadow-lg"
                   data-testid={`img-amenity-${index}`}
                 />
                 <div>
                   <h3 className="text-2xl font-bold text-secondary mb-3" data-testid={`text-amenity-title-${index}`}>
-                    {amenity.title}
+                    {amenity.title || "Premium Amenity"}
                   </h3>
                   <p className="text-muted" data-testid={`text-amenity-description-${index}`}>
-                    {amenity.description}
+                    {amenity.description || "Enjoy this premium amenity"}
                   </p>
                 </div>
               </div>

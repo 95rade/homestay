@@ -30,6 +30,25 @@ export const contacts = pgTable("contacts", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const contentSections = pgTable("content_sections", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sectionKey: text("section_key").notNull().unique(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  metadata: text("metadata"), // JSON string for additional data
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const propertyImages = pgTable("property_images", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  category: text("category").notNull(), // 'exterior', 'interior', 'amenity'
+  url: text("url").notNull(),
+  title: text("title"),
+  description: text("description"),
+  sortOrder: integer("sort_order").default(0),
+  isActive: text("is_active").notNull().default("true"),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -58,9 +77,34 @@ export const insertContactSchema = createInsertSchema(contacts).omit({
   message: z.string().min(1, "Message is required"),
 });
 
+export const insertContentSectionSchema = createInsertSchema(contentSections).omit({
+  id: true,
+  updatedAt: true,
+}).extend({
+  sectionKey: z.string().min(1, "Section key is required"),
+  title: z.string().min(1, "Title is required"),
+  content: z.string().min(1, "Content is required"),
+  metadata: z.string().optional(),
+});
+
+export const insertPropertyImageSchema = createInsertSchema(propertyImages).omit({
+  id: true,
+}).extend({
+  category: z.enum(["exterior", "interior", "amenity"]),
+  url: z.string().url("Valid URL is required"),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  sortOrder: z.number().default(0),
+  isActive: z.string().default("true"),
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertBooking = z.infer<typeof insertBookingSchema>;
 export type Booking = typeof bookings.$inferSelect;
 export type InsertContact = z.infer<typeof insertContactSchema>;
 export type Contact = typeof contacts.$inferSelect;
+export type InsertContentSection = z.infer<typeof insertContentSectionSchema>;
+export type ContentSection = typeof contentSections.$inferSelect;
+export type InsertPropertyImage = z.infer<typeof insertPropertyImageSchema>;
+export type PropertyImage = typeof propertyImages.$inferSelect;
