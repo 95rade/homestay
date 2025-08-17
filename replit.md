@@ -7,6 +7,7 @@ This is a luxury vacation rental booking application built with React (frontend)
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Visual Editor: Primary interface for content management, not an additional feature.
 
 ## System Architecture
 

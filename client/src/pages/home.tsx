@@ -103,13 +103,6 @@ export default function Home() {
               >
                 Contact
               </button>
-              <a 
-                href="/editor"
-                className="text-secondary hover:text-primary transition-colors"
-                data-testid="nav-editor"
-              >
-                Visual Editor
-              </a>
             </div>
           </div>
         </div>

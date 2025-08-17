@@ -515,16 +515,24 @@ export default function Editor() {
                 <span className="text-white font-bold text-lg">L</span>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-secondary">Visual Editor</h1>
-                <p className="text-sm text-muted-foreground">Manage your rental property content</p>
+                <h1 className="text-xl font-bold text-secondary">LuxeStay Editor</h1>
+                <p className="text-sm text-muted-foreground">Edit your rental property website</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-4">
+              <a 
+                href="/"
+                className="text-secondary hover:text-primary transition-colors text-sm"
+                data-testid="nav-preview"
+              >
+                Preview Website
+              </a>
               <Badge variant="outline" className="flex items-center gap-1">
                 <Settings className="w-3 h-3" />
-                Admin
+                Edit Mode
               </Badge>
             </div>
+
           </div>
         </div>
       </div>
@@ -546,9 +554,9 @@ export default function Editor() {
           <TabsContent value="content" className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold">Content Management</h2>
+                <h2 className="text-2xl font-bold">Edit Website Text</h2>
                 <p className="text-muted-foreground">
-                  Edit text content that appears on your rental property website
+                  Click the edit button next to any text section to modify content
                 </p>
               </div>
             </div>
@@ -574,9 +582,9 @@ export default function Editor() {
           <TabsContent value="images" className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold">Image Management</h2>
+                <h2 className="text-2xl font-bold">Edit Website Images</h2>
                 <p className="text-muted-foreground">
-                  Manage images for exterior, interior, and amenity sections
+                  Add, edit, or remove images for your property gallery
                 </p>
               </div>
             </div>
