@@ -10,7 +10,7 @@ export default function Home() {
 
   const exteriorImages = [
     "https://demo-source.imgix.net/house.jpg",
-    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
+    "https://drive.google.com/file/d/1LFb38rkToUDzVkM5yeiTgT_NdsNkB10J/view?usp=sharing",
     "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
     "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
     "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
@@ -18,7 +18,7 @@ export default function Home() {
   ];
 
   const interiorImages = [
-    { url: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Living Room", description: "Open-concept design with panoramic views" },
+    { url: "https://demo-source.imgix.net/plant.jpg", title: "Living Room", description: "Open-concept design with panoramic views" },
     { url: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Master Suite", description: "King bed with stunning ocean views" },
     { url: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Gourmet Kitchen", description: "Professional-grade appliances" },
     { url: "https://images.unsplash.com/photo-1620626011761-996317b8d101?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", title: "Spa Bathroom", description: "Marble finishes and soaking tub" },
