@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Slideshow from "@/components/slideshow";
-import BookingForm from "@/components/booking-form";
-import ContactForm from "@/components/contact-form";
+import Slideshow from "../components/slideshow";
+import BookingForm from "../components/booking-form";
+import ContactForm from "../components/contact-form";
 import { Card } from "@/components/ui/card";
 import { Star, Wifi, Car, Shield } from "lucide-react";
 
@@ -10,7 +10,7 @@ export default function Home() {
 
   const exteriorImages = [
     "https://demo-source.imgix.net/house.jpg",
-    "https://drive.google.com/file/d/1LFb38rkToUDzVkM5yeiTgT_NdsNkB10J/view?usp=sharing",
+    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
     "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
     "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
     "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
