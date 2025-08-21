@@ -150,15 +150,21 @@ export default function Home() {
                 <div className="flex items-center space-x-6 mb-8 text-muted">
                   <div className="flex items-center space-x-2">
                     <span className="text-primary">🛏️</span>
-                    <span data-testid="text-bedrooms">3 Bedrooms</span>
+                    <span data-testid="text-bedrooms">
+                      {getContent("property-bedrooms") || "3"} Bedrooms
+                    </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-primary">🛁</span>
-                    <span data-testid="text-bathrooms">2½ Bathrooms</span>
+                    <span data-testid="text-bathrooms">
+                      {getContent("property-bathrooms") || "2½"} Bathrooms
+                    </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-primary">👥</span>
-                    <span data-testid="text-guests">Up to 6 Guests</span>
+                    <span data-testid="text-guests">
+                      Up to {getContent("property-guests") || "6"} Guests
+                    </span>
                   </div>
                 </div>
                 

@@ -208,6 +208,27 @@ export class MemStorage implements IStorage {
     });
 
     await this.createContentSection({
+      sectionKey: "property-bedrooms",
+      title: "Number of Bedrooms",
+      content: "3",
+      metadata: JSON.stringify({ editable: true, type: "text" })
+    });
+
+    await this.createContentSection({
+      sectionKey: "property-bathrooms",
+      title: "Number of Bathrooms",
+      content: "2½",
+      metadata: JSON.stringify({ editable: true, type: "text" })
+    });
+
+    await this.createContentSection({
+      sectionKey: "property-guests",
+      title: "Maximum Guests",
+      content: "6",
+      metadata: JSON.stringify({ editable: true, type: "text" })
+    });
+
+    await this.createContentSection({
       sectionKey: "property-description",
       title: "Property Description",
       content: "Discover the perfect blend of modern luxury and natural beauty in our stunning contemporary villa. Perched on a hillside with breathtaking panoramic views, this architectural masterpiece offers an unparalleled vacation experience.\n\nThe villa features expansive living spaces with floor-to-ceiling windows that blur the line between indoor and outdoor living. Each of the five beautifully appointed bedrooms offers stunning views and en-suite bathrooms, ensuring privacy and comfort for all guests.\n\nWhether you're seeking a romantic getaway, family vacation, or corporate retreat, our villa provides the perfect sanctuary with world-class amenities and personalized service.",
