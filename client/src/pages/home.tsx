@@ -147,18 +147,18 @@ export default function Home() {
                 <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-6" data-testid="text-property-title">
                   {getContent("property-title") || "Modern Luxury Villa"}
                 </h2>
-                <div className="flex flex-wrap items-center gap-6 mb-8 text-muted">
+                <div className="flex items-center space-x-6 mb-8 text-muted">
                   <div className="flex items-center space-x-2">
                     <span className="text-primary">🛏️</span>
-                    <span data-testid="text-bedrooms">5 Bedrooms</span>
+                    <span data-testid="text-bedrooms">3 Bedrooms</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-primary">🛁</span>
-                    <span data-testid="text-bathrooms">4 Bathrooms</span>
+                    <span data-testid="text-bathrooms">2½ Bathrooms</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-primary">👥</span>
-                    <span data-testid="text-guests">Up to 10 Guests</span>
+                    <span data-testid="text-guests">Up to 6 Guests</span>
                   </div>
                 </div>
                 
