@@ -80,13 +80,16 @@ export default function Home() {
                 <span>⭐</span>
                 <span>⭐</span>
               </div>
-              <button 
+              <a 
+                href="https://www.google.com/maps/search/Casa+Rondini+Krti+Soviscina"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2"
                 data-testid="button-find-on-map"
               >
                 <span>🗺️</span>
                 <span>Find Us On Map</span>
-              </button>
+              </a>
             </div>
             <div className="hidden md:flex space-x-8">
               <button 
