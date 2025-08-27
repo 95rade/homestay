@@ -4,11 +4,13 @@ import Slideshow from "../components/slideshow";
 import BookingForm from "../components/booking-form";
 import ContactForm from "../components/contact-form";
 import { Card } from "@/components/ui/card";
-import { Star, Wifi, Car, Shield } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Star, Wifi, Car, Shield, X } from "lucide-react";
 import type { ContentSection, PropertyImage } from "@shared/schema";
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("gallery");
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
   // Fetch dynamic content from CMS
   const { data: content = [] } = useQuery<ContentSection[]>({
@@ -145,7 +147,9 @@ export default function Home() {
               >
                 Book Your Stay
               </button>
-              <button className="border-2 border-white text-white hover:bg-white hover:text-secondary px-8 py-4 rounded-lg font-semibold transition-colors"
+              <button 
+                onClick={() => setIsVideoModalOpen(true)}
+                className="border-2 border-white text-white hover:bg-white hover:text-secondary px-8 py-4 rounded-lg font-semibold transition-colors"
                 data-testid="button-virtual-tour"
               >
                 Virtual Tour
@@ -463,6 +467,36 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Virtual Tour Video Modal */}
+      <Dialog open={isVideoModalOpen} onOpenChange={setIsVideoModalOpen}>
+        <DialogContent className="max-w-4xl w-full p-0">
+          <DialogHeader className="p-6 pb-0">
+            <DialogTitle className="text-2xl font-bold text-secondary">Virtual Tour</DialogTitle>
+          </DialogHeader>
+          <div className="p-6 pt-4">
+            <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+              <video
+                className="w-full h-full"
+                controls
+                autoPlay
+                data-testid="video-virtual-tour"
+              >
+                <source 
+                  src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" 
+                  type="video/mp4" 
+                />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <div className="mt-4 text-center">
+              <p className="text-gray-600">
+                Take a virtual walk through our luxury villa and experience the beauty of every room.
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
