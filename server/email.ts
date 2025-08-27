@@ -53,7 +53,7 @@ export function generateBookingConfirmationEmail(booking: Booking): string {
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Booking Confirmation - LuxeStay</title>
+      <title>Booking Confirmation - Casa Rondini</title>
       <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background-color: #f8fafc; }
         .container { max-width: 600px; margin: 0 auto; background-color: white; }
@@ -81,7 +81,7 @@ export function generateBookingConfirmationEmail(booking: Booking): string {
         <div class="content">
           <p>Dear ${booking.guestName},</p>
           
-          <p>Thank you for choosing LuxeStay! We're excited to confirm your reservation at our luxury villa. Your booking details are below:</p>
+          <p>Thank you for choosing to stay at Casa Rondini! We're excited to confirm your reservation at our luxury villa. Your booking details are below:</p>
           
           <div class="booking-card">
             <h3 style="margin-top: 0; color: #1e293b;">Reservation Details</h3>
@@ -127,20 +127,20 @@ export function generateBookingConfirmationEmail(booking: Booking): string {
           
           <div class="contact-info">
             <h3>Need Help?</h3>
-            <p><strong>Phone:</strong> +1 (555) 123-4567<br>
-            <strong>Email:</strong> reservations@luxestay.com<br>
-            <strong>24/7 Concierge:</strong> concierge@luxestay.com</p>
+            <p><strong>Phone:</strong> +1 (720) 499-2288<br>
+            <strong>Email:</strong> info@rondini.casa<br>
+            <strong>24/7 Concierge:</strong> info@rondini.casa</p>
           </div>
           
           <p>We can't wait to welcome you to your luxury retreat!</p>
           
           <p>Best regards,<br>
-          <strong>The LuxeStay Team</strong></p>
+          <strong>Rade Milijasevic and Heather Munro</strong></p>
         </div>
         
         <div class="footer">
-          <p style="margin: 0;">© 2024 LuxeStay. All rights reserved.</p>
-          <p style="margin: 10px 0 0 0; font-size: 14px;">123 Coastal Highway, Malibu, CA 90265</p>
+          <p style="margin: 0;">© 2024-2025 Casa Rondini. All rights reserved.</p>
+          <p style="margin: 10px 0 0 0; font-size: 14px;">123 1 Brush Hill Rd, Merrimac, MA 01860</p>
         </div>
       </div>
     </body>
@@ -153,8 +153,8 @@ export async function sendBookingConfirmation(booking: Booking): Promise<boolean
   
   return await sendEmail({
     to: booking.guestEmail,
-    from: 'reservations@luxestay.com', // This should be a verified sender in SendGrid
-    subject: `Booking Confirmed - LuxeStay Villa Reservation #${booking.id.slice(-8)}`,
+    from: 'info@rondini.casa', // This should be a verified sender in SendGrid
+    subject: `Booking Confirmed - Casa Rondini Reservation #${booking.id.slice(-8)}`,
     html: emailHtml
   });
 }
