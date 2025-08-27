@@ -66,7 +66,19 @@ export const insertBookingSchema = createInsertSchema(bookings).omit({
   guestPhone: z.string().optional(),
   totalAmount: z.string().min(1, "Total amount is required"),
   status: z.string().default("pending"),
-});
+}).refine(
+  (data) => {
+    if (!data.checkinDate || !data.checkoutDate) return false;
+    const checkin = new Date(data.checkinDate);
+    const checkout = new Date(data.checkoutDate);
+    const nights = Math.ceil((checkout.getTime() - checkin.getTime()) / (1000 * 60 * 60 * 24));
+    return nights >= 5;
+  },
+  {
+    message: "Minimum stay is 5 nights",
+    path: ["checkoutDate"]
+  }
+);
 
 export const paymentSchema = z.object({
   cardNumber: z.string().min(1, "Card number is required").refine(

@@ -94,8 +94,17 @@ export default function BookingForm() {
     return subtotal + serviceFee + taxes;
   };
 
+  const getNightsCount = (checkin: string, checkout: string) => {
+    if (!checkin || !checkout) return 0;
+    const checkinDate = new Date(checkin);
+    const checkoutDate = new Date(checkout);
+    return Math.ceil((checkoutDate.getTime() - checkinDate.getTime()) / (1000 * 60 * 60 * 24));
+  };
+
   const watchedValues = form.watch();
   const total = calculateTotal(watchedValues.checkinDate, watchedValues.checkoutDate, watchedValues.guests);
+  const nights = getNightsCount(watchedValues.checkinDate, watchedValues.checkoutDate);
+  const meetsMinimumStay = nights === 0 || nights >= 5;
 
   const onSubmit = (data: InsertBooking) => {
     const submissionData = {
@@ -172,6 +181,7 @@ export default function BookingForm() {
               <span className="text-lg font-normal text-muted">/ night</span>
             </div>
             <div className="text-sm text-muted mt-1">★ 4.9 (127 reviews)</div>
+            <div className="text-sm text-primary font-medium mt-2">Minimum 5-night stay</div>
           </div>
 
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -206,6 +216,11 @@ export default function BookingForm() {
                 />
                 {form.formState.errors.checkoutDate && (
                   <p className="text-red-500 text-xs mt-1">{form.formState.errors.checkoutDate.message}</p>
+                )}
+                {nights > 0 && !meetsMinimumStay && (
+                  <p className="text-red-500 text-xs mt-1">
+                    Minimum stay is 5 nights. Currently selected: {nights} night{nights !== 1 ? 's' : ''}
+                  </p>
                 )}
               </div>
             </div>
@@ -281,11 +296,12 @@ export default function BookingForm() {
 
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-blue-700 text-white py-3 rounded-lg font-semibold"
-              disabled={createBookingMutation.isPending}
+              className="w-full bg-primary hover:bg-blue-700 text-white py-3 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={createBookingMutation.isPending || !meetsMinimumStay}
               data-testid="button-reserve"
             >
-              {createBookingMutation.isPending ? "Processing..." : "Reserve Now"}
+              {createBookingMutation.isPending ? "Processing..." : 
+               !meetsMinimumStay && nights > 0 ? "Minimum 5 nights required" : "Reserve Now"}
             </Button>
           </form>
 
@@ -293,7 +309,7 @@ export default function BookingForm() {
             <div className="mt-6 space-y-2 text-sm">
               <div className="flex justify-between">
                 <span data-testid="text-calculation">
-                  $850 x {Math.ceil((new Date(watchedValues.checkoutDate).getTime() - new Date(watchedValues.checkinDate).getTime()) / (1000 * 60 * 60 * 24))} nights
+                  $850 x {nights} night{nights !== 1 ? 's' : ''}
                 </span>
                 <span data-testid="text-subtotal">${(total * 0.86).toFixed(0)}</span>
               </div>
