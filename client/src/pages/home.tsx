@@ -166,7 +166,7 @@ export default function Home() {
             <div className="grid lg:grid-cols-3 gap-12">
               <div className="lg:col-span-2">
                 <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-6" data-testid="text-property-title">
-                  {getContent("property-title") || "Modern Luxury Villa"}
+                  {getContent("property-title") || "Casa Rondini Traditional Luxury Villa"}
                 </h2>
                 <div className="flex items-center space-x-6 mb-8 text-muted">
                   <div className="flex items-center space-x-2">
@@ -199,7 +199,7 @@ export default function Home() {
                   ) : (
                     <>
                       <p className="mb-6">
-                        Discover the perfect blend of modern luxury and natural beauty in our stunning contemporary villa. 
+                        Discover the perfect blend of modern luxury and natural beauty in our stunning traditional Istrian villa. 
                         Perched on a hillside with breathtaking panoramic views, this architectural masterpiece offers an 
                         unparalleled vacation experience.
                       </p>
