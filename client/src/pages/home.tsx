@@ -134,10 +134,10 @@ export default function Home() {
         <div className="absolute inset-0 flex items-center justify-center z-10">
           <div className="text-center text-white px-4 max-w-4xl">
             <h1 className="text-4xl md:text-6xl font-bold mb-6" data-testid="hero-title">
-              {getContent("hero-title") || "Luxury Villa Retreat"}
+              {getContent("hero-title") || "Casa Rondini Villa Retreat"}
             </h1>
             <p className="text-xl md:text-2xl mb-8 font-light" data-testid="hero-subtitle">
-              {getContent("hero-subtitle") || "Experience unparalleled comfort in our stunning contemporary villa"}
+              {getContent("hero-subtitle") || "Experience unparalleled comfort in our stunning classic Istrian villa"}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
@@ -458,10 +458,10 @@ export default function Home() {
               <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
                 <span className="text-secondary font-bold text-lg">L</span>
               </div>
-              <span className="text-xl font-bold">LuxeStay</span>
+              <span className="text-xl font-bold">Casa Rondini</span>
             </div>
             <div className="text-center md:text-right text-gray-400">
-              <p>&copy; 2024 LuxeStay. All rights reserved.</p>
+              <p>&copy; 2024-2025 Casa Rondini. All rights reserved.</p>
               <p className="text-sm">Privacy Policy | Terms of Service</p>
             </div>
           </div>
