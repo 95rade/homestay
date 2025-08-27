@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertBookingSchema, type InsertBooking } from "@shared/schema";
+import { insertBookingSchema, paymentSchema, type InsertBooking, type Payment } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,11 +11,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CalendarDays, Users, DollarSign } from "lucide-react";
+import { CalendarDays, Users, DollarSign, CreditCard, ArrowLeft, Shield } from "lucide-react";
 
 export default function BookingForm() {
   const [showBookingDialog, setShowBookingDialog] = useState(false);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
+  const [bookingData, setBookingData] = useState<InsertBooking | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -30,6 +32,23 @@ export default function BookingForm() {
       guestPhone: "",
       totalAmount: "0",
       status: "pending",
+    },
+  });
+
+  const paymentForm = useForm<Payment>({
+    resolver: zodResolver(paymentSchema),
+    defaultValues: {
+      cardNumber: "",
+      expiryDate: "",
+      cvv: "",
+      cardHolder: "",
+      billingAddress: {
+        address: "",
+        city: "",
+        state: "",
+        zipCode: "",
+        country: "United States",
+      },
     },
   });
 
@@ -82,7 +101,48 @@ export default function BookingForm() {
       ...data,
       totalAmount: total.toString(),
     };
-    createBookingMutation.mutate(submissionData);
+    setBookingData(submissionData);
+    setShowPaymentForm(true);
+  };
+
+  const onPaymentSubmit = (paymentData: Payment) => {
+    if (!bookingData) return;
+    
+    // Mock payment processing
+    setTimeout(() => {
+      createBookingMutation.mutate({
+        ...bookingData,
+        status: "confirmed",
+      });
+      setShowPaymentForm(false);
+      toast({
+        title: "Payment Successful",
+        description: "Your payment has been processed successfully.",
+      });
+    }, 2000);
+  };
+
+  const formatCardNumber = (value: string) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = v.match(/\d{4,16}/g);
+    const match = matches && matches[0] || '';
+    const parts = [];
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+    if (parts.length) {
+      return parts.join(' ');
+    } else {
+      return v;
+    }
+  };
+
+  const formatExpiry = (value: string) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    if (v.length >= 2) {
+      return v.substring(0, 2) + '/' + v.substring(2, 4);
+    }
+    return v;
   };
 
   return (
@@ -282,6 +342,219 @@ export default function BookingForm() {
               </p>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Payment Form Dialog */}
+      <Dialog open={showPaymentForm} onOpenChange={setShowPaymentForm}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-primary" />
+              Secure Payment
+            </DialogTitle>
+            <DialogDescription>
+              Complete your booking by entering your payment information
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={paymentForm.handleSubmit(onPaymentSubmit)} className="space-y-6">
+            {/* Credit Card Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Shield className="w-4 h-4" />
+                Payment Information
+              </h3>
+              
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <Label htmlFor="cardNumber">Card Number</Label>
+                  <Input
+                    id="cardNumber"
+                    placeholder="1234 5678 9012 3456"
+                    {...paymentForm.register("cardNumber")}
+                    onChange={(e) => {
+                      const formatted = formatCardNumber(e.target.value);
+                      paymentForm.setValue("cardNumber", formatted);
+                    }}
+                    maxLength={19}
+                    data-testid="input-card-number"
+                  />
+                  {paymentForm.formState.errors.cardNumber && (
+                    <p className="text-red-500 text-xs mt-1">{paymentForm.formState.errors.cardNumber.message}</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="expiryDate">Expiry Date</Label>
+                    <Input
+                      id="expiryDate"
+                      placeholder="MM/YY"
+                      {...paymentForm.register("expiryDate")}
+                      onChange={(e) => {
+                        const formatted = formatExpiry(e.target.value);
+                        paymentForm.setValue("expiryDate", formatted);
+                      }}
+                      maxLength={5}
+                      data-testid="input-expiry"
+                    />
+                    {paymentForm.formState.errors.expiryDate && (
+                      <p className="text-red-500 text-xs mt-1">{paymentForm.formState.errors.expiryDate.message}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="cvv">CVV</Label>
+                    <Input
+                      id="cvv"
+                      placeholder="123"
+                      {...paymentForm.register("cvv")}
+                      maxLength={4}
+                      data-testid="input-cvv"
+                    />
+                    {paymentForm.formState.errors.cvv && (
+                      <p className="text-red-500 text-xs mt-1">{paymentForm.formState.errors.cvv.message}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="cardHolder">Cardholder Name</Label>
+                  <Input
+                    id="cardHolder"
+                    placeholder="John Doe"
+                    {...paymentForm.register("cardHolder")}
+                    data-testid="input-cardholder"
+                  />
+                  {paymentForm.formState.errors.cardHolder && (
+                    <p className="text-red-500 text-xs mt-1">{paymentForm.formState.errors.cardHolder.message}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Billing Address */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Billing Address</h3>
+              
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <Label htmlFor="address">Street Address</Label>
+                  <Input
+                    id="address"
+                    placeholder="123 Main Street"
+                    {...paymentForm.register("billingAddress.address")}
+                    data-testid="input-address"
+                  />
+                  {paymentForm.formState.errors.billingAddress?.address && (
+                    <p className="text-red-500 text-xs mt-1">{paymentForm.formState.errors.billingAddress.address.message}</p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="city">City</Label>
+                    <Input
+                      id="city"
+                      placeholder="San Francisco"
+                      {...paymentForm.register("billingAddress.city")}
+                      data-testid="input-city"
+                    />
+                    {paymentForm.formState.errors.billingAddress?.city && (
+                      <p className="text-red-500 text-xs mt-1">{paymentForm.formState.errors.billingAddress.city.message}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="state">State</Label>
+                    <Input
+                      id="state"
+                      placeholder="CA"
+                      {...paymentForm.register("billingAddress.state")}
+                      data-testid="input-state"
+                    />
+                    {paymentForm.formState.errors.billingAddress?.state && (
+                      <p className="text-red-500 text-xs mt-1">{paymentForm.formState.errors.billingAddress.state.message}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="zipCode">ZIP Code</Label>
+                    <Input
+                      id="zipCode"
+                      placeholder="94103"
+                      {...paymentForm.register("billingAddress.zipCode")}
+                      data-testid="input-zipcode"
+                    />
+                    {paymentForm.formState.errors.billingAddress?.zipCode && (
+                      <p className="text-red-500 text-xs mt-1">{paymentForm.formState.errors.billingAddress.zipCode.message}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="country">Country</Label>
+                    <Select
+                      value={paymentForm.watch("billingAddress.country")}
+                      onValueChange={(value) => paymentForm.setValue("billingAddress.country", value)}
+                    >
+                      <SelectTrigger data-testid="select-country">
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="United States">United States</SelectItem>
+                        <SelectItem value="Canada">Canada</SelectItem>
+                        <SelectItem value="United Kingdom">United Kingdom</SelectItem>
+                        <SelectItem value="Australia">Australia</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {paymentForm.formState.errors.billingAddress?.country && (
+                      <p className="text-red-500 text-xs mt-1">{paymentForm.formState.errors.billingAddress.country.message}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Summary */}
+            {bookingData && (
+              <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                <h3 className="font-semibold">Payment Summary</h3>
+                <div className="flex justify-between">
+                  <span>Booking Total:</span>
+                  <span className="font-bold">${bookingData.totalAmount}</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <p>Check-in: {new Date(bookingData.checkinDate).toLocaleDateString()}</p>
+                  <p>Check-out: {new Date(bookingData.checkoutDate).toLocaleDateString()}</p>
+                  <p>Guests: {bookingData.guests}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowPaymentForm(false)}
+                className="flex-1"
+                data-testid="button-back"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 bg-primary hover:bg-blue-700"
+                disabled={createBookingMutation.isPending}
+                data-testid="button-pay"
+              >
+                {createBookingMutation.isPending ? "Processing..." : `Pay $${bookingData?.totalAmount || "0"}`}
+              </Button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
     </>

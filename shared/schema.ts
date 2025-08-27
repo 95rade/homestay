@@ -68,6 +68,20 @@ export const insertBookingSchema = createInsertSchema(bookings).omit({
   status: z.string().default("pending"),
 });
 
+export const paymentSchema = z.object({
+  cardNumber: z.string().min(13, "Card number must be at least 13 digits").max(19, "Card number must be at most 19 digits"),
+  expiryDate: z.string().regex(/^(0[1-9]|1[0-2])\/\d{2}$/, "Expiry date must be in MM/YY format"),
+  cvv: z.string().min(3, "CVV must be at least 3 digits").max(4, "CVV must be at most 4 digits"),
+  cardHolder: z.string().min(1, "Cardholder name is required"),
+  billingAddress: z.object({
+    address: z.string().min(1, "Address is required"),
+    city: z.string().min(1, "City is required"),
+    state: z.string().min(1, "State is required"),
+    zipCode: z.string().min(5, "ZIP code must be at least 5 characters"),
+    country: z.string().min(1, "Country is required"),
+  }),
+});
+
 export const insertContactSchema = createInsertSchema(contacts).omit({
   id: true,
   createdAt: true,
@@ -108,3 +122,4 @@ export type InsertContentSection = z.infer<typeof insertContentSectionSchema>;
 export type ContentSection = typeof contentSections.$inferSelect;
 export type InsertPropertyImage = z.infer<typeof insertPropertyImageSchema>;
 export type PropertyImage = typeof propertyImages.$inferSelect;
+export type Payment = z.infer<typeof paymentSchema>;
