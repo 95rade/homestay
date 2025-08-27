@@ -69,7 +69,10 @@ export const insertBookingSchema = createInsertSchema(bookings).omit({
 });
 
 export const paymentSchema = z.object({
-  cardNumber: z.string().min(13, "Card number must be at least 13 digits").max(19, "Card number must be at most 19 digits"),
+  cardNumber: z.string().min(1, "Card number is required").refine(
+    (val) => val.replace(/\s/g, '').length >= 13,
+    "Card number must be at least 13 digits"
+  ),
   expiryDate: z.string().regex(/^(0[1-9]|1[0-2])\/\d{2}$/, "Expiry date must be in MM/YY format"),
   cvv: z.string().min(3, "CVV must be at least 3 digits").max(4, "CVV must be at most 4 digits"),
   cardHolder: z.string().min(1, "Cardholder name is required"),

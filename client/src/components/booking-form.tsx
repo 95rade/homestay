@@ -50,6 +50,7 @@ export default function BookingForm() {
         country: "United States",
       },
     },
+    mode: "onChange",
   });
 
   const createBookingMutation = useMutation({
@@ -105,21 +106,37 @@ export default function BookingForm() {
     setShowPaymentForm(true);
   };
 
+  const processPaymentMutation = useMutation({
+    mutationFn: async ({ paymentData, bookingData }: { paymentData: Payment; bookingData: InsertBooking }) => {
+      const response = await apiRequest("POST", "/api/process-payment", {
+        paymentData,
+        bookingData
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setBookingDetails(data.booking);
+      setShowPaymentForm(false);
+      setShowBookingDialog(true);
+      paymentForm.reset();
+      queryClient.invalidateQueries({ queryKey: ["/api/bookings"] });
+      toast({
+        title: "Payment Successful!",
+        description: "Your booking has been confirmed and payment processed.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Payment Failed",
+        description: error.message || "Payment processing failed. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const onPaymentSubmit = (paymentData: Payment) => {
     if (!bookingData) return;
-    
-    // Mock payment processing
-    setTimeout(() => {
-      createBookingMutation.mutate({
-        ...bookingData,
-        status: "confirmed",
-      });
-      setShowPaymentForm(false);
-      toast({
-        title: "Payment Successful",
-        description: "Your payment has been processed successfully.",
-      });
-    }, 2000);
+    processPaymentMutation.mutate({ paymentData, bookingData });
   };
 
   const formatCardNumber = (value: string) => {
@@ -372,10 +389,10 @@ export default function BookingForm() {
                   <Input
                     id="cardNumber"
                     placeholder="1234 5678 9012 3456"
-                    {...paymentForm.register("cardNumber")}
+                    value={paymentForm.watch("cardNumber")}
                     onChange={(e) => {
                       const formatted = formatCardNumber(e.target.value);
-                      paymentForm.setValue("cardNumber", formatted);
+                      paymentForm.setValue("cardNumber", formatted, { shouldValidate: true });
                     }}
                     maxLength={19}
                     data-testid="input-card-number"
@@ -391,10 +408,10 @@ export default function BookingForm() {
                     <Input
                       id="expiryDate"
                       placeholder="MM/YY"
-                      {...paymentForm.register("expiryDate")}
+                      value={paymentForm.watch("expiryDate")}
                       onChange={(e) => {
                         const formatted = formatExpiry(e.target.value);
-                        paymentForm.setValue("expiryDate", formatted);
+                        paymentForm.setValue("expiryDate", formatted, { shouldValidate: true });
                       }}
                       maxLength={5}
                       data-testid="input-expiry"
@@ -548,10 +565,10 @@ export default function BookingForm() {
               <Button
                 type="submit"
                 className="flex-1 bg-primary hover:bg-blue-700"
-                disabled={createBookingMutation.isPending}
+                disabled={processPaymentMutation.isPending}
                 data-testid="button-pay"
               >
-                {createBookingMutation.isPending ? "Processing..." : `Pay $${bookingData?.totalAmount || "0"}`}
+                {processPaymentMutation.isPending ? "Processing..." : `Pay $${bookingData?.totalAmount || "0"}`}
               </Button>
             </div>
           </form>

@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertBookingSchema, insertContactSchema, insertContentSectionSchema, insertPropertyImageSchema } from "@shared/schema";
+import { insertBookingSchema, insertContactSchema, insertContentSectionSchema, insertPropertyImageSchema, paymentSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -65,6 +65,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(booking);
     } catch (error) {
       res.status(500).json({ message: "Failed to update booking" });
+    }
+  });
+
+  // Process payment
+  app.post("/api/process-payment", async (req, res) => {
+    try {
+      const validatedPayment = paymentSchema.parse(req.body.paymentData);
+      const validatedBooking = insertBookingSchema.parse(req.body.bookingData);
+      
+      // Mock payment processing - in real implementation, you would:
+      // 1. Validate with payment processor (Stripe, PayPal, etc.)
+      // 2. Create payment record
+      // 3. Update booking status
+      
+      // Simulate processing delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Create the booking with confirmed status
+      const booking = await storage.createBooking({
+        ...validatedBooking,
+        status: "confirmed"
+      });
+      
+      res.status(200).json({
+        success: true,
+        booking,
+        paymentId: `pay_${Date.now()}`, // Mock payment ID
+        message: "Payment processed successfully"
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ 
+          message: "Validation error", 
+          errors: error.errors 
+        });
+      } else {
+        res.status(500).json({ 
+          message: "Payment processing failed",
+          error: error instanceof Error ? error.message : "Unknown error"
+        });
+      }
     }
   });
 
