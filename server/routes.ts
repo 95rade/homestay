@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertBookingSchema, insertContactSchema, insertContentSectionSchema, insertPropertyImageSchema, paymentSchema } from "@shared/schema";
+import { sendBookingConfirmation } from "./email";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -21,6 +22,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = insertBookingSchema.parse(req.body);
       const booking = await storage.createBooking(validatedData);
+      
+      // Send confirmation email for confirmed bookings
+      if (booking.status === "confirmed") {
+        try {
+          const emailSent = await sendBookingConfirmation(booking);
+          if (!emailSent) {
+            console.warn(`Failed to send confirmation email for booking ${booking.id}`);
+          }
+        } catch (error) {
+          console.error(`Error sending confirmation email for booking ${booking.id}:`, error);
+        }
+      }
+      
       res.status(201).json(booking);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -87,6 +101,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...validatedBooking,
         status: "confirmed"
       });
+      
+      // Send confirmation email
+      try {
+        const emailSent = await sendBookingConfirmation(booking);
+        if (!emailSent) {
+          console.warn(`Failed to send confirmation email for booking ${booking.id}`);
+        }
+      } catch (error) {
+        console.error(`Error sending confirmation email for booking ${booking.id}:`, error);
+      }
       
       res.status(200).json({
         success: true,
