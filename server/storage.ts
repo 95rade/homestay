@@ -237,11 +237,14 @@ export class MemStorage implements IStorage {
 
     // Initialize default property images
     const exteriorImages = [
-      "https://demo-source.imgix.net/house.jpg",
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080",
-      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080"
+      "https://iili.io/Kd4RT7I.jpg",
+      "https://iili.io/KHXc6Tg.jpg",
+      "https://iili.io/K9ZFad7.jpg",
+      "https://iili.io/FmeMlg2.jpg",
+      "https://iili.io/FmeMc0l.jpg",
+      "https://iili.io/K9ZFlee.jpg",
+      "https://iili.io/FmaIc4R.jpg"
+        //"https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080"
     ];
 
     exteriorImages.forEach(async (url, index) => {
