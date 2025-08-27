@@ -364,7 +364,7 @@ export default function BookingForm() {
 
       {/* Payment Form Dialog */}
       <Dialog open={showPaymentForm} onOpenChange={setShowPaymentForm}>
-        <DialogContent className="sm:max-w-2xl">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <CreditCard className="w-5 h-5 text-primary" />
