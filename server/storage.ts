@@ -189,21 +189,21 @@ export class MemStorage implements IStorage {
     await this.createContentSection({
       sectionKey: "hero-title",
       title: "Hero Title",
-      content: "Luxury Villa Retreat",
+      content: "Casa Rondini Villa Retreat",
       metadata: JSON.stringify({ editable: true, type: "text" })
     });
 
     await this.createContentSection({
       sectionKey: "hero-subtitle",
       title: "Hero Subtitle",
-      content: "Experience unparalleled comfort in our stunning contemporary villa",
+      content: "Experience unparalleled comfort in our stunning traditional Istrian villa",
       metadata: JSON.stringify({ editable: true, type: "text" })
     });
 
     await this.createContentSection({
       sectionKey: "property-title",
       title: "Property Title",
-      content: "Modern Luxury Villa",
+      content: "Casa Rondini Luxury Villa",
       metadata: JSON.stringify({ editable: true, type: "text" })
     });
 
