@@ -103,13 +103,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       // Send confirmation email
+      console.log(`Attempting to send confirmation email for booking ${booking.id} to ${booking.guestEmail}`);
       try {
         const emailSent = await sendBookingConfirmation(booking);
-        if (!emailSent) {
-          console.warn(`Failed to send confirmation email for booking ${booking.id}`);
+        if (emailSent) {
+          console.log(`✅ Confirmation email sent successfully for booking ${booking.id}`);
+        } else {
+          console.warn(`❌ Failed to send confirmation email for booking ${booking.id}`);
         }
       } catch (error) {
-        console.error(`Error sending confirmation email for booking ${booking.id}:`, error);
+        console.error(`💥 Error sending confirmation email for booking ${booking.id}:`, error);
       }
       
       res.status(200).json({

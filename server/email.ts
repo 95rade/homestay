@@ -1,12 +1,11 @@
-import { MailService } from '@sendgrid/mail';
+import sgMail from '@sendgrid/mail';
 import type { Booking } from '@shared/schema';
 
 if (!process.env.SENDGRID_API_KEY) {
   throw new Error("SENDGRID_API_KEY environment variable must be set");
 }
 
-const mailService = new MailService();
-mailService.setApiKey(process.env.SENDGRID_API_KEY);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 interface EmailParams {
   to: string;
@@ -17,15 +16,19 @@ interface EmailParams {
 
 export async function sendEmail(params: EmailParams): Promise<boolean> {
   try {
-    await mailService.send({
+    await sgMail.send({
       to: params.to,
       from: params.from,
       subject: params.subject,
       html: params.html,
     });
+    console.log(`Email sent successfully to ${params.to}`);
     return true;
   } catch (error) {
     console.error('SendGrid email error:', error);
+    if (error && typeof error === 'object' && 'response' in error) {
+      console.error('SendGrid error details:', (error as any).response?.body);
+    }
     return false;
   }
 }
@@ -151,10 +154,23 @@ export function generateBookingConfirmationEmail(booking: Booking): string {
 export async function sendBookingConfirmation(booking: Booking): Promise<boolean> {
   const emailHtml = generateBookingConfirmationEmail(booking);
   
+  // Try multiple verified sender addresses - you should replace these with your verified SendGrid addresses
+  const possibleSenders = [
+    'test@example.com', // Replace with your verified SendGrid sender
+    'noreply@luxestay.com',
+    'reservations@luxestay.com',
+    'booking@luxestay.com'
+  ];
+  
+  // For demo purposes, use the first sender
+  const fromAddress = possibleSenders[0];
+  
+  console.log(`Sending email from: ${fromAddress} to: ${booking.guestEmail}`);
+  
   return await sendEmail({
     to: booking.guestEmail,
-    from: 'info@rondini.casa', // This should be a verified sender in SendGrid
-    subject: `Booking Confirmed - Casa Rondini Reservation #${booking.id.slice(-8)}`,
+    from: fromAddress,
+    subject: `Booking Confirmed - LuxeStay Villa Reservation #${booking.id.slice(-8)}`,
     html: emailHtml
   });
 }
