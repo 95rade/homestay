@@ -26,7 +26,6 @@ jobs:
 
     - name: Deploy to Replit
       run: |
-        : # curl -X POST 'https://replit.com/api/deployendpointhere' \
-        curl -X POST 'https://replit.com/@rmilijasevic/homestay.replit.dev' \
-        -H 'Authorization: Bearer ${{ secrets.REPLIT_TOKEN }}' \
-        -F 'data=@build'
+        curl -X POST 'https://replit.com/@rmilijasevic/homestay' # \
+        # -H 'Authorization: Bearer ${{ secrets.REPLIT_TOKEN }}' \
+        # -F 'data=@build'
