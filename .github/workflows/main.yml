@@ -6,7 +6,7 @@ on:
     - main
 
 jobs:
-  build:
+  build_and_run:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,6 +27,6 @@ jobs:
     - name: Deploy to Replit
       run: |
         curl 'https://replit.com/@rmilijasevic/homestay' \
-        curl -X POST 'http://127.0.0.1:3000/'
+        curl -X POST 'http://127.0.0.1:3000/' \
         -H 'Authorization: Bearer ${{ secrets.REPLIT_TOKEN }}' \
         -F 'data=@build'
