@@ -26,6 +26,7 @@ jobs:
 
     - name: Deploy to Replit
       run: |
-        curl -X POST 'https://replit.com/@rmilijasevic/homestay' # \
+        curl GET 'https://replit.com/@rmilijasevic/homestay' \
+        curl -X POST 'http://127.0.0.1:3000/'
         # -H 'Authorization: Bearer ${{ secrets.REPLIT_TOKEN }}' \
         # -F 'data=@build'
